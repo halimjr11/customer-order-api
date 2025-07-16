@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group = 'com.halimjr11'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repository.jboss.org/nexus/content/groups/public/"
+    }
+}
+
+dependencies {
+    // REST API
+    implementation 'org.glassfish.jersey.containers:jersey-container-servlet:2.35'
+    implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:2.35'
+
+    // PostgreSQL
+    implementation 'org.postgresql:postgresql:42.7.2'
+
+    // ActiveMQ & JMS
+    implementation 'org.apache.activemq:activemq-all:5.15.15'
+    implementation 'org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1'
+
+    // Servlet API (provided by WebLogic)
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+}
+
+war {
+    archiveFileName = 'customer-order-api.war'
+    from {
+        configurations.runtimeClasspath.findAll {
+            it.name.contains('postgresql')
+        }.collect {
+            zipTree(it)
+        }
+    }
+}
